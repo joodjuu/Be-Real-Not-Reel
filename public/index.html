@@ -1,96 +1,377 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Be Real Not Reel Quiz</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be Real, Not Reel</title>
   <style>
+    :root {
+      --text: #57284f;
+      --muted: #835e7d;
+      --pink: #ff62a6;
+      --pink2: #ff9bc9;
+      --purple: #a269ff;
+      --redpurple: #d73478;
+      --bg1: #fff9fd;
+      --bg2: #fff2f8;
+      --border: rgba(215, 52, 120, 0.14);
+      --shadow: 0 20px 45px rgba(185, 62, 128, 0.15);
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: sans-serif;
-      background: linear-gradient(135deg, #ffd6ec, #f3e8ff);
-      text-align: center;
-      padding: 30px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 98, 166, 0.22), transparent 28%),
+        radial-gradient(circle at 90% 90%, rgba(162, 105, 255, 0.18), transparent 30%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
     }
-    .box {
-      background: white;
+    .app { max-width: 980px; margin: 0 auto; padding: 20px 16px 48px; }
+    .panel {
+      background: rgba(255,255,255,0.84);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .pill {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.15; }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); }
+    h2 { font-size: clamp(1.35rem, 3vw, 2rem); }
+    .subtitle { color: var(--muted); line-height: 1.75; max-width: 760px; }
+    .hero-card, .card, .question-card {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,98,166,0.13);
+      border-radius: 24px;
       padding: 20px;
-      border-radius: 20px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      background: #ff69b4;
-      color: white;
+    .hero-card { margin-top: 24px; max-width: 460px; }
+    label { font-size: 14px; color: var(--muted); }
+    input {
+      width: 100%; margin: 8px 0 16px; padding: 14px 16px; border-radius: 16px;
+      border: 1px solid rgba(162,105,255,0.18); font: inherit;
+    }
+    .btn {
+      border: none; border-radius: 18px; padding: 13px 18px; font: inherit; font-weight: 700; cursor: pointer;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; }
+    .btn-secondary { background: linear-gradient(135deg, #ffc0dc, #ff8bbc); color: #782b52; }
+    .btn-ghost { background: rgba(255,255,255,0.9); color: var(--redpurple); border: 1px solid rgba(215,52,120,0.16); }
+    .topbar, .actions { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .actions { margin-top: 20px; }
+    .progress-box { min-width: 220px; width: 300px; }
+    .progress-text { text-align: right; color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+    .progress-track, .bar-track { width: 100%; height: 12px; background: rgba(255,255,255,0.95); border-radius: 999px; overflow: hidden; }
+    .progress-bar, .bar-fill { height: 100%; background: linear-gradient(135deg, var(--pink), var(--purple)); }
+    .question-card { margin-top: 16px; }
+    .question-text { font-size: clamp(1.08rem, 2vw, 1.34rem); line-height: 1.7; }
+    .options-list { display: grid; gap: 12px; margin-top: 18px; }
+    .option-btn {
+      width: 100%; display: flex; gap: 14px; text-align: left; align-items: flex-start;
+      border: 1px solid rgba(162,105,255,0.18); background: rgba(255,255,255,0.95);
+      border-radius: 20px; padding: 16px; cursor: pointer; font: inherit; color: var(--text);
+    }
+    .option-btn.selected { background: linear-gradient(135deg, rgba(255,98,166,0.18), rgba(162,105,255,0.18)); border-color: transparent; }
+    .option-key {
+      width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--pink), var(--redpurple)); color: white; font-weight: 700; flex: 0 0 34px;
+    }
+    .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 22px; }
+    .summary-card { margin-top: 16px; }
+    .score-row { margin-bottom: 14px; }
+    .score-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; color: var(--muted); font-size: 14px; }
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+      background: rgba(87,40,79,0.96); color: white; padding: 12px 16px; border-radius: 16px;
+    }
+    .hidden { display: none !important; }
+    @media (max-width: 760px) {
+      .panel { padding: 18px; border-radius: 22px; }
+      .result-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+  <main class="app">
+    <section id="startScreen" class="panel">
+      <div class="pill">💗 MBTI Vibe Quiz</div>
+      <h1>BE REAL, NOT REEL</h1>
+      <p class="subtitle">แบบทดสอบฟีลสนุก ๆ เล่นคนเดียวได้ทุกเวลา ใครก็กดเข้าลิงก์มาเล่นได้เลยบน Render</p>
+      <div class="hero-card">
+        <label for="playerName">ชื่อเล่นของคุณ</label>
+        <input id="playerName" maxlength="24" placeholder="เช่น Fah" />
+        <button id="startBtn" class="btn btn-primary">เริ่มทำแบบทดสอบ</button>
+      </div>
+    </section>
 
-<div class="box">
-  <h1>✨ Be Real Not Reel ✨</h1>
-  <p id="question">กดเริ่มเพื่อทำแบบทดสอบ</p>
+    <section id="quizScreen" class="panel hidden">
+      <div class="topbar">
+        <div>
+          <div class="pill">✨ Personality Check</div>
+          <h2 id="questionNumber"></h2>
+        </div>
+        <div class="progress-box">
+          <div class="progress-text" id="progressText"></div>
+          <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        </div>
+      </div>
+      <div class="question-card">
+        <p id="questionText" class="question-text"></p>
+        <div id="optionsList" class="options-list"></div>
+      </div>
+      <div class="actions">
+        <button id="prevBtn" class="btn btn-ghost">ย้อนกลับ</button>
+        <button id="nextBtn" class="btn btn-primary">ข้อต่อไป</button>
+      </div>
+    </section>
 
-  <div id="choices"></div>
+    <section id="resultScreen" class="panel hidden">
+      <div class="pill">🌷 Your Result</div>
+      <h2 id="helloText"></h2>
+      <h1 id="resultTitle"></h1>
+      <p id="resultDesc" class="subtitle"></p>
+      <div class="result-grid">
+        <div class="card"><h3>The Reel / The Real</h3><p id="resultSides"></p></div>
+        <div class="card"><h3>Sis to Sis Advice</h3><p id="resultAdvice"></p></div>
+      </div>
+      <div class="card summary-card">
+        <h3>สรุปคำตอบของคุณ</h3>
+        <div id="scoreSummary"></div>
+      </div>
+      <div class="actions">
+        <button id="retakeBtn" class="btn btn-primary">เล่นอีกครั้ง</button>
+        <button id="copyBtn" class="btn btn-secondary">คัดลอกผลลัพธ์</button>
+      </div>
+    </section>
 
-  <button onclick="start()">เริ่ม</button>
-</div>
+    <div id="toast" class="toast hidden"></div>
+  </main>
 
-<script>
-const questions = [
-  {
-    q: "เวลาลง Story แล้วคนดูน้อย คุณจะ...",
-    a: ["ไม่แคร์", "นอยด์", "ช่างมัน", "คิดมาก"]
-  },
-  {
-    q: "เวลาไปคาเฟ่ใหม่ คุณจะ...",
-    a: ["วิเคราะห์กาแฟ", "ถ่ายรูป", "ไม่ไป", "วิจารณ์"]
-  }
-];
+  <script>
+    const QUESTIONS = [
+      { text: 'เวลาลง Story แล้วคนดูน้อยกว่าปกติ คุณมักจะ...', options: { A: 'ไม่แคร์ กะลงไว้ดูเองเป็น Archive อยู่แล้ว', B: 'นอยด์ ลบแล้วลงใหม่ช่วง Prime Time หรือเช็กว่าเผลอปิด Close Friend มั้ย', C: 'ช่างมันเหอะ ลงเสร็จก็โยนโทรศัพท์ทิ้งแล้วไปนอน', D: 'แอบคิดว่า หรือเพื่อนเริ่มรำคาญกู หรือช่วงนี้กูดูจืดจางไปนะ' } },
+      { text: 'เวลาเจอคาเฟ่เปิดใหม่ที่กำลังฮิตสุด ๆ สิ่งแรกที่คิดคือ...', options: { A: 'เมล็ดกาแฟร้านนี้จะเปรี้ยวหรือติดนัตตี้ คุ้มราคา 150 มั้ย', B: 'ต้องจองคิว ถ่ายมุมไหนได้ยอดไลก์ฉ่ำ ชุดต้องไม่ซ้ำกับคนอื่น', C: 'คนเยอะแน่เลย ขี้เกียจต่อแถว สั่ง Grab มากินที่บ้านดีกว่า', D: 'ร้านดูพยายามจัดแสงเกินไปว่ะ ดูไม่เป็นธรรมชาติเลย' } },
+      { text: 'คุณรู้สึกยังไงกับการดองแชท?', options: { A: 'ไม่ได้ดอง แค่ยังไม่มีคำตอบที่ make sense เลยยังไม่ตอบ', B: 'ดองเฉพาะคนที่ไม่อยู่ใน list ความสนใจ ต้องรักษาลุคคนไม่ว่าง', C: 'ดองจริง ดองลืม เห็นแจ้งเตือนแล้วแต่ขี้เกียจพิมพ์', D: 'เห็นแล้วแต่ใจสั่น ไม่รู้จะตอบยังไงให้ดูดี เลยขอเวลาไปตั้งสติก่อน' } },
+      { text: 'สไตล์การตั้งชื่อ Close Friend ของคุณคือ...', options: { A: 'เอาไว้ลงสรุปบทเรียนหรือแชร์ข่าวที่น่าสนใจเฉพาะกลุ่ม', B: 'เอาไว้ลงรูปที่หลุด ๆ บ้างแต่ยังสวยอยู่ ให้ดูเป็นคนตลก', C: 'แอดทุกคนที่คุยด้วย เพราะขี้เกียจมานั่งคัด', D: 'มีอยู่แค่ 2-3 คนที่ไว้ลงระบายความในใจมืด ๆ' } },
+      { text: 'แคปชั่น OOTD ของคุณมักจะเป็น...', options: { A: 'บอกพิกัดชุด ยี่ห้อ ราคา พร้อมรีวิวเนื้อผ้า', B: 'ประโยคภาษาอังกฤษสั้น ๆ ที่ดูเท่แบบไม่ต้องพยายาม แต่นั่งคิดครึ่งชั่วโมง', C: 'แต่งตัวตามอารมณ์ ซึ่งจริง ๆ คือหยิบตัวที่อยู่บนสุดของกองผ้า', D: 'เนื้อเพลงเศร้า ๆ ที่ไม่เกี่ยวกับชุดเลย แค่อยากลง' } },
+      { text: 'เวลาทำงานกลุ่มแล้วเจอคนไม่ช่วยงาน คุณจะ...', options: { A: 'กางตารางแบ่งงานชัดเจน ใครไม่ทำตัดชื่อออก จบ', B: 'บ่นลงสตอรี่ Close Friend แบบไม่เอ่ยชื่อ ให้เขามาเห็นเอง', C: 'ช่างแม่มัน เดี๋ยวทำเองก็ได้ รำคาญการทวง', D: 'ไม่กล้าทวงตรง ๆ แต่แอบเก็บมาเครียดอยู่คนเดียว' } },
+      { text: 'เวลาไปคอนเสิร์ต ศิลปินตัวท็อปอยู่ตรงหน้า คุณมักจะ...', options: { A: 'ยืนวิเคราะห์โชว์ การจัดแสง ระบบเสียง และ setlist', B: 'ยกโทรศัพท์ขึ้นมาถ่าย Story รัว ๆ มุมต้องเป๊ะ Tag ศิลปินต้องมา', C: 'โยกตามจังหวะแบบจอย ๆ โทรศัพท์แทบไม่ได้หยิบมาดู', D: 'ยืนซึ้งน้ำตาคลอ อินกับเนื้อเพลงจนลืมถ่ายรูปไปเลย' } },
+      { text: 'เวลาต้องแนะนำตัวในคลาสเรียนใหม่...', options: { A: 'บอกชื่อ คณะ และความสนใจที่ดูโปรไฟล์ดี', B: 'พยายามปล่อยมุกให้ดูเป็นคนสนุกสนาน น่าคบหา', C: 'พูดสั้นที่สุด ชื่อ... แล้วรีบนั่งลง', D: 'ตื่นเต้นจนเสียงสั่น คิดในใจว่าพูดอะไรออกไปบ้างวะเนี่ย' } },
+      { text: 'ถ้าเพื่อนชวนไปเที่ยวคืนนี้ แต่ใจจริงอยากนอน...', options: { A: 'ปฏิเสธตรง ๆ ไม่ไป งานยังไม่เสร็จ', B: 'เดี๋ยวดูอีกทีนะ แต่ลึก ๆ คือกะเบี้ยวตอนนาทีสุดท้าย', C: 'ไปดิ แต่ไปนั่งหลับในงาน', D: 'กังวลว่าถ้าไม่ไป เพื่อนจะเลิกคบมั้ย สุดท้ายเลยจำใจไป' } },
+      { text: 'สถานะทางการเงินของคุณตอนนี้เปรียบได้กับ...', options: { A: 'การบริหารงบประมาณรายจ่ายที่แม่นยำ แต่แอบตึง', B: 'ของมันต้องมี ยอมกินมาม่าเพื่อได้รองเท้าคู่โปรด', C: 'มีเท่าไหร่ใช้เท่านั้น ไม่คิดมาก เดี๋ยวตังค์ก็มาเอง', D: 'ซื้อของบำบัดความเครียด พอเห็นยอดเงินแล้วเครียดกว่าเดิม' } },
+      { text: 'เวลาคุยกับคนที่แอบชอบ คุณมักจะ...', options: { A: 'ถามคำถามปลายเปิดเพื่อเช็กทัศนคติว่าเข้ากันได้มั้ย', B: 'ลงสตอรี่ล่อซื้อ ให้เขามา Reply หรือเช็กว่าเขามาดูหรือยัง', C: 'คุยแบบเป็นตัวเองสุด ๆ ตลกโปกฮา ไม่ห่วงสวยหรือหล่อ', D: 'พิมพ์แล้วลบ นั่งพิมพ์เป็นชั่วโมงเพื่อคำว่า กินข้าวยัง' } },
+      { text: 'นิยามของความรักในปี 2026 ของคุณคือ...', options: { A: 'การมีพาร์ทเนอร์ที่ซัพพอร์ตชีวิตและเป้าหมาย', B: 'การมีแฟนที่ถ่ายรูปสวย และไลฟ์สไตล์เข้ากันได้', C: 'การมีใครสักคนที่นอนอืดดู Netflix ด้วยกันได้โดยไม่อึดอัด', D: 'การตามหาคนที่เข้าใจความพังข้างในของเราจริง ๆ' } },
+      { text: 'เมื่อโดนเทหรือโดนบอกเลิก...', options: { A: 'หาเหตุผลว่าทำไมถึงไปกันไม่ได้ แล้วหาทางมูฟออนแบบเป็นระบบ', B: 'ลงสตอรี่ว่าชีวิตดีขึ้นมากหลังโสด แต่จริง ๆ แอบร้องไห้', C: 'ช่างมัน หาคนใหม่คุย หรือออกไปกินเหล้ากับเพื่อน', D: 'ฟัง Playlist เพลงเศร้าวนไป เข้าสู่ช่วงดิ่งแบบสมบูรณ์' } },
+      { text: 'เวลาเห็นคนเปิดตัวแฟนในโซเชียล...', options: { A: 'ยินดีด้วย และแอบประเมินว่าคู่นี้จะรอดมั้ย', B: 'แอบไปส่องโปรไฟล์แฟนเขาว่าดีกว่าเราตรงไหน', C: 'อืม ดีจัง แล้วเลื่อนผ่านไปดูคลิปแมวต่อ', D: 'รู้สึกเหงาขึ้นมาทันที และตั้งคำถามว่าเมื่อไหร่จะถึงคิวเรา' } },
+      { text: 'คุณคิดยังไงกับ situationship?', options: { A: 'ไม่โอเค เสียเวลา และไม่มีประสิทธิภาพในการสร้างอนาคต', B: 'ก็เก๋ดีนะ ดูเป็นคนมีเสน่ห์ ลึกลับ คุยแก้เหงาไปก่อน', C: 'แล้วแต่เลย สบายดี ไม่ผูกมัด อยากเลิกคุยเมื่อไหร่ก็ได้', D: 'เจ็บแต่จบไม่ได้ เพราะดันรักเขาไปแล้วจริง ๆ' } },
+      { text: 'สิ่งที่คุณทำเป็นอย่างแรกหลังกลับถึงห้องคนเดียว...', options: { A: 'จัดของ เช็กตารางงานพรุ่งนี้', B: 'เช็ก Notification และเช็กยอดวิวสตอรี่ที่เพิ่งลง', C: 'ถอดชุดนอนแหมะไว้ที่พื้น แล้วทิ้งตัวลงบนเตียงทันที', D: 'นั่งเหม่ออยู่เงียบ ๆ ทบทวนว่าวันนี้ทำอะไรพลาดไปบ้างมั้ย' } },
+      { text: 'เวลาต้องตัดสินใจเรื่องใหญ่ในชีวิต คุณเชื่อ...', options: { A: 'ข้อมูลและ Logic 100%', B: 'ภาพลักษณ์และความสำเร็จที่คนจะมองเข้ามา', C: 'สัญชาตญาณ ทำไปเหอะ เดี๋ยวดีเอง', D: 'ความรู้สึกของคนรอบข้างที่เรารัก' } },
+      { text: 'คำว่า Be Real สำหรับคุณหมายถึง...', options: { A: 'การยอมรับความจริงแบบไม่อคติ', B: 'การกล้าโชว์มุมที่ไม่เพอร์เฟกต์ แต่ยังดูอาร์ต', C: 'การทำอะไรก็ได้ที่อยากทำ ไม่ต้องแคร์โลก', D: 'การกล้าเปิดเผยความอ่อนแอให้ใครสักคนเห็น' } },
+      { text: 'ถ้าพรุ่งนี้โลกจะแตก คุณจะเลือก...', options: { A: 'รวบรวมข้อมูลว่าทำไมโลกถึงแตก และหาทางรอด', B: 'ลงรูปสุดท้ายที่สวยที่สุดในชีวิตพร้อมแคปชั่นลาโลก', C: 'นอนหลับให้สบายที่สุด หรือกินของที่อยากกิน', D: 'อยู่กับคนที่รักที่สุดและบอกทุกอย่างที่ไม่เคยพูด' } },
+      { text: 'คุณในอนาคตอีก 10 ปีข้างหน้าจะเป็นคนแบบไหน?', options: { A: 'คนที่ประสบความสำเร็จ มีหน้าที่การงานที่มั่นคง', B: 'คนที่มีอิทธิพล มีชื่อเสียง และคนยอมรับในรสนิยม', C: 'คนที่ยังคงใช้ชีวิตเรียบง่ายและมีความสุขกับเรื่องเล็ก ๆ', D: 'คนที่รักตัวเองเป็น และเยียวยาแผลใจตัวเองได้หมดแล้ว' } }
+    ];
 
-let current = 0;
-let score = [0,0,0,0];
+    const RESULTS = {
+      A: { title: 'The Sigma Nerd (เนิร์ดทรงสิกม่า)', description: 'คุณมันเริ่ด คุณมันมีสมอง ฉลาดแบบตะโกน เพื่อน ๆ มักจะทักมาถามเรื่องงานหรือเรื่องเรียนตลอด เพราะรู้ว่าทักมาแล้วได้คำตอบชัวร์ ไม่ต้องรอนาน คุณมองการณ์ไกลและมีแผนสำรองเสมอ', sides: 'The Reel / The Real: จริง ๆ คือเนิร์ดที่ขี้เกียจเข้าสังคม สมองทำงานหนัก 24 ชม. จนปวดหัว และแอบรำคาญคนที่ถามอะไรโง่ ๆ', advice: 'เลิกทำตัวเป็น Google ตลอดเวลา ลองปล่อยให้คนอื่นโง่บ้างก็ได้ แล้วเอาเวลาไปนอน หรือไปทำอะไรปัญญาอ่อนดูบ้างนะ ความสมบูรณ์แบบมันน่าเบื่อ!' },
+      B: { title: 'The Main Character (ตัวแม่จะแคร์เพื่อ)', description: 'พลังงานล้นเหลือ รู้วิธีทำให้คนรอบข้างหัวเราะและมีความสุข รสนิยมคือที่หนึ่ง แฟชั่นคือลมหายใจ ไอจีต้องปัง สตอรี่ต้องเป๊ะ ทุกที่คือรันเวย์', sides: 'The Reel: ชีวิตดี ชีวิตปัง เพื่อนเยอะ ดูมีความสุขตลอดเวลา | The Real: จริง ๆ คือเสพติดยอดไลก์ นอยด์ง่ายถ้าสตอรี่คนดูน้อย และเหนื่อยมากกับการต้องรักษาภาพลักษณ์ให้ดูดีตลอดเวลา', advice: 'กล้าที่จะลงรูปพัง ๆ บ้างก็ได้ คนจะรักคุณที่ความจริงใจมากกว่าแค่รูปสวย ๆ การยอมรับความไม่สมบูรณ์แบบคือความเท่ที่แท้จริงนะยัยตัวดี!' },
+      C: { title: 'Bedroom Philosopher (ตำนานสายชิลล์)', description: 'รักอิสระ จริงใจ ตรงไปตรงมา มีความสุขกับสิ่งง่าย ๆ รอบตัว ส่วนใหญ่คือนอน เข้าถึงง่าย ไม่เรื่องมาก เพื่อน ๆ อยู่ด้วยแล้วสบายใจที่สุด', sides: 'The Reel: ชิลล์ ๆ ไม่คิดมาก ชีวิตดูง่าย ๆ สบาย ๆ | The Real: จริง ๆ คือขี้เกียจขั้นสุด ดองงานเก่ง ดองแชทเก่ง และไม่มีแผนการอะไรในชีวิตเลย นอกจากว่าจะกินอะไรเย็นนี้', advice: 'ลองหันมาใส่ใจรายละเอียดหรือความรู้สึกของคนใกล้ชิดเพิ่มอีกนิด จะทำให้ความสัมพันธ์ราบรื่นขึ้น และลองวางแผนชีวิตบ้างเถอะ พรุ่งนี้อาจจะไม่มีข้าวกินนะ!' },
+      D: { title: 'The Deep Soul (เจ้าแม่/เจ้าพ่อคิดมาก)', description: 'ความคิดสร้างสรรค์สูง โลกส่วนตัวที่น่าหลงใหล เป็นผู้ฟังที่ดีมาก เพื่อน ๆ มักจะมาปรึกษาเรื่องหัวใจเสมอ', sides: 'The Reel: ดูมีเสน่ห์ ลึกลับ น่าค้นหา เหมือนมีอะไรซ่อนอยู่ตลอดเวลา | The Real: จริง ๆ คือคนคิดมาก ดิ่งง่าย และชอบหายตัวไปเวลาที่รู้สึกไม่สบายใจ แทนที่จะพูดตรง ๆ', advice: 'ฝึกสื่อสารความรู้สึกตัวเองออกมาบ้าง การเปิดใจไม่ใช่อาการของความอ่อนแอ แต่คือความเข้มแข็งอย่างหนึ่งนะ และเลิก Ghost เพื่อนได้แล้ว พวกเขาเป็นห่วง!' }
+    };
 
-function start() {
-  current = 0;
-  score = [0,0,0,0];
-  show();
-}
+    const state = { current: 0, answers: {}, name: '' };
+    const startScreen = document.getElementById('startScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const playerName = document.getElementById('playerName');
+    const startBtn = document.getElementById('startBtn');
+    const questionNumber = document.getElementById('questionNumber');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    const questionText = document.getElementById('questionText');
+    const optionsList = document.getElementById('optionsList');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const helloText = document.getElementById('helloText');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultDesc = document.getElementById('resultDesc');
+    const resultSides = document.getElementById('resultSides');
+    const resultAdvice = document.getElementById('resultAdvice');
+    const scoreSummary = document.getElementById('scoreSummary');
+    const retakeBtn = document.getElementById('retakeBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
 
-function show() {
-  if(current >= questions.length){
-    result();
-    return;
-  }
-
-  document.getElementById("question").innerText = questions[current].q;
-
-  const choicesDiv = document.getElementById("choices");
-  choicesDiv.innerHTML = "";
-
-  questions[current].a.forEach((choice, i)=>{
-    const btn = document.createElement("button");
-    btn.innerText = choice;
-    btn.onclick = ()=>{
-      score[i]++;
-      current++;
-      show();
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.add('hidden'), 2300);
     }
-    choicesDiv.appendChild(btn);
-  });
-}
 
-function result(){
-  const max = score.indexOf(Math.max(...score));
-  const types = ["Sigma Nerd", "Main Character", "Chill", "Deep Soul"];
-  document.getElementById("question").innerText = "คุณคือ: " + types[max];
-  document.getElementById("choices").innerHTML = "";
-}
-</script>
+    function switchScreen(name) {
+      startScreen.classList.toggle('hidden', name !== 'start');
+      quizScreen.classList.toggle('hidden', name !== 'quiz');
+      resultScreen.classList.toggle('hidden', name !== 'result');
+    }
 
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function saveDraft() {
+      localStorage.setItem('beRealRenderDraft', JSON.stringify({ name: state.name, current: state.current, answers: state.answers }));
+    }
+
+    function tryRestoreDraft() {
+      const draft = JSON.parse(localStorage.getItem('beRealRenderDraft') || 'null');
+      if (!draft) return;
+      state.name = draft.name || '';
+      state.current = Number.isInteger(draft.current) ? draft.current : 0;
+      state.answers = draft.answers || {};
+      playerName.value = state.name;
+    }
+
+    function renderQuestion() {
+      const q = QUESTIONS[state.current];
+      questionNumber.textContent = `คำถามที่ ${state.current + 1}`;
+      progressText.textContent = `${state.current + 1} / ${QUESTIONS.length}`;
+      progressBar.style.width = `${((state.current + 1) / QUESTIONS.length) * 100}%`;
+      questionText.textContent = q.text;
+      optionsList.innerHTML = '';
+      const currentAnswer = state.answers[state.current];
+
+      Object.entries(q.options).forEach(([key, text]) => {
+        const btn = document.createElement('button');
+        btn.className = `option-btn ${currentAnswer === key ? 'selected' : ''}`;
+        const label = key === 'A' ? 'ก' : key === 'B' ? 'ข' : key === 'C' ? 'ค' : 'ง';
+        btn.innerHTML = `<span class="option-key">${label}</span><span>${escapeHtml(text)}</span>`;
+        btn.addEventListener('click', () => {
+          state.answers[state.current] = key;
+          saveDraft();
+          renderQuestion();
+        });
+        optionsList.appendChild(btn);
+      });
+
+      prevBtn.disabled = state.current === 0;
+      nextBtn.textContent = state.current === QUESTIONS.length - 1 ? 'ดูผลลัพธ์' : 'ข้อต่อไป';
+    }
+
+    function countScores() {
+      const counts = { A: 0, B: 0, C: 0, D: 0 };
+      Object.values(state.answers).forEach(answer => {
+        if (counts[answer] !== undefined) counts[answer] += 1;
+      });
+      return counts;
+    }
+
+    function getWinner(counts) {
+      const order = ['A', 'B', 'C', 'D'];
+      let winner = 'A';
+      order.forEach(k => {
+        if (counts[k] > counts[winner]) winner = k;
+      });
+      return winner;
+    }
+
+    function renderResult() {
+      const counts = countScores();
+      const key = getWinner(counts);
+      const result = RESULTS[key];
+      const total = Object.keys(state.answers).length || 1;
+      const labels = { A: 'ก / Sigma Nerd', B: 'ข / Main Character', C: 'ค / Bedroom Philosopher', D: 'ง / Deep Soul' };
+
+      helloText.textContent = state.name ? `ผลลัพธ์ของ ${state.name}` : 'ผลลัพธ์ของคุณ';
+      resultTitle.textContent = result.title;
+      resultDesc.textContent = result.description;
+      resultSides.textContent = result.sides;
+      resultAdvice.textContent = result.advice;
+      scoreSummary.innerHTML = '';
+
+      Object.entries(counts).forEach(([k, v]) => {
+        const percent = Math.round((v / total) * 100);
+        const row = document.createElement('div');
+        row.className = 'score-row';
+        row.innerHTML = `
+          <div class="score-head"><span>${labels[k]}</span><span>${v} ข้อ · ${percent}%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${percent}%"></div></div>
+        `;
+        scoreSummary.appendChild(row);
+      });
+
+      localStorage.setItem('beRealRenderResult', JSON.stringify({ name: state.name, key, counts }));
+    }
+
+    function startQuiz() {
+      const name = playerName.value.trim();
+      if (!name) return showToast('ใส่ชื่อเล่นก่อนนะ');
+      state.name = name;
+      state.current = 0;
+      state.answers = {};
+      saveDraft();
+      switchScreen('quiz');
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      if (!state.answers[state.current]) return showToast('เลือกคำตอบก่อน');
+      if (state.current === QUESTIONS.length - 1) {
+        renderResult();
+        switchScreen('result');
+        return;
+      }
+      state.current += 1;
+      saveDraft();
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      if (state.current > 0) {
+        state.current -= 1;
+        saveDraft();
+        renderQuestion();
+      }
+    }
+
+    function retakeQuiz() {
+      state.current = 0;
+      state.answers = {};
+      localStorage.removeItem('beRealRenderDraft');
+      switchScreen('start');
+    }
+
+    function copyResult() {
+      const saved = JSON.parse(localStorage.getItem('beRealRenderResult') || 'null');
+      if (!saved || !saved.key) return showToast('ยังไม่มีผลลัพธ์ให้คัดลอก');
+      const result = RESULTS[saved.key];
+      const text = `${saved.name ? saved.name + '\n' : ''}${result.title}\n\n${result.description}\n\n${result.sides}\n\nSis to Sis Advice: ${result.advice}`;
+      navigator.clipboard.writeText(text)
+        .then(() => showToast('คัดลอกผลลัพธ์แล้ว'))
+        .catch(() => showToast('คัดลอกไม่สำเร็จ'));
+    }
+
+    startBtn.addEventListener('click', startQuiz);
+    nextBtn.addEventListener('click', nextQuestion);
+    prevBtn.addEventListener('click', prevQuestion);
+    retakeBtn.addEventListener('click', retakeQuiz);
+    copyBtn.addEventListener('click', copyResult);
+
+    tryRestoreDraft();
+  </script>
 </body>
 </html>

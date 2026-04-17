@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Be Real Not Reel Quiz</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #ffd6ec, #f3e8ff);
+      text-align: center;
+      padding: 30px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: #ff69b4;
+      color: white;
+    }
+  </style>
+</head>
+<body>
 
+<div class="box">
+  <h1>✨ Be Real Not Reel ✨</h1>
+  <p id="question">กดเริ่มเพื่อทำแบบทดสอบ</p>
+
+  <div id="choices"></div>
+
+  <button onclick="start()">เริ่ม</button>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "เวลาลง Story แล้วคนดูน้อย คุณจะ...",
+    a: ["ไม่แคร์", "นอยด์", "ช่างมัน", "คิดมาก"]
+  },
+  {
+    q: "เวลาไปคาเฟ่ใหม่ คุณจะ...",
+    a: ["วิเคราะห์กาแฟ", "ถ่ายรูป", "ไม่ไป", "วิจารณ์"]
+  }
+];
+
+let current = 0;
+let score = [0,0,0,0];
+
+function start() {
+  current = 0;
+  score = [0,0,0,0];
+  show();
+}
+
+function show() {
+  if(current >= questions.length){
+    result();
+    return;
+  }
+
+  document.getElementById("question").innerText = questions[current].q;
+
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+
+  questions[current].a.forEach((choice, i)=>{
+    const btn = document.createElement("button");
+    btn.innerText = choice;
+    btn.onclick = ()=>{
+      score[i]++;
+      current++;
+      show();
+    }
+    choicesDiv.appendChild(btn);
+  });
+}
+
+function result(){
+  const max = score.indexOf(Math.max(...score));
+  const types = ["Sigma Nerd", "Main Character", "Chill", "Deep Soul"];
+  document.getElementById("question").innerText = "คุณคือ: " + types[max];
+  document.getElementById("choices").innerHTML = "";
+}
+</script>
+
+</body>
+</html>
